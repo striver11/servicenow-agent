@@ -4,13 +4,34 @@ on:
   workflow_dispatch:
     inputs:
       command:
-        description: "Tell the agent what to do"
+        description: "Tell the agent what to do (e.g. 'create a task for deployment review')"
         required: true
         type: string
 
 jobs:
   run-agent:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
-      - name: Print command
-        run: echo "Command is ${{ github.event.inputs.command }}"
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd agent
+          npm install
+
+      - name: Run ServiceNow Agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SNOW_INSTANCE: ${{ secrets.SNOW_INSTANCE }}
+          SNOW_USERNAME: ${{ secrets.SNOW_USERNAME }}
+          SNOW_PASSWORD: ${{ secrets.SNOW_PASSWORD }}
+          USER_COMMAND: ${{ github.event.inputs.command }}
+        run: |
+          cd agent
+          node index.js

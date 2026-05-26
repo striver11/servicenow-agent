@@ -97,10 +97,10 @@ async function executeTool(name, input) {
   console.log(`   Input: ${JSON.stringify(input, null, 2)}`);
 
   switch (name) {
-    case 'create_task':   return await createTask(input);
-    case 'update_task':   return await updateTask(input);
-    case 'close_task':    return await closeTask(input);
-    case 'get_task':      return await getTask(input);
+    case 'create_task': return await createTask(input);
+    case 'update_task': return await updateTask(input);
+    case 'close_task': return await closeTask(input);
+    case 'get_task': return await getTask(input);
     default: throw new Error(`Unknown tool: ${name}`);
   }
 }
@@ -135,7 +135,7 @@ Rules:
   // Agentic loop — keep going until Claude stops calling tools
   while (true) {
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-5',
       max_tokens: 1024,
       system: systemPrompt,
       tools,
