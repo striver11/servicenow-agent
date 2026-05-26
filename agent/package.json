@@ -1,0 +1,13 @@
+{
+  "name": "servicenow-agent",
+  "version": "1.0.0",
+  "description": "Claude-powered GitHub Actions agent for ServiceNow",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0"
+  }
+}
