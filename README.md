@@ -1,6 +1,6 @@
-# 🤖 ServiceNow Agent — Powered by Claude AI
+# 🤖 ServiceNow Agent — Powered by Google Gemini
 
-> A POC | Built with Claude AI + GitHub Actions + ServiceNow REST API
+> A POC | Built with Google Gemini + GitHub Actions + ServiceNow REST API
 
 This agent lets you manage ServiceNow tasks using plain English commands. No UI needed — just type what you want and the AI does it.
 
@@ -44,7 +44,7 @@ You type a command in GitHub Actions
             ↓
     Node.js runs the agent (index.js)
             ↓
-    Claude AI reads your command
+    Gemini reads your command
     and decides which tool to call
             ↓
     ┌─────────────────────────────┐
@@ -57,7 +57,7 @@ You type a command in GitHub Actions
             ↓
     Ticket created/updated in ServiceNow
             ↓
-    Claude summarizes: "Done! SCTASK0010001 created"
+    Gemini summarizes: "Done! SCTASK0010001 created"
             ↓
     You see the result in GitHub Actions logs
 ```
@@ -72,7 +72,7 @@ servicenow-agent/
 │   └── workflows/
 │       └── servicenow-agent.yml   ← GitHub Actions trigger + pipeline
 ├── agent/
-│   ├── index.js                   ← Claude agent brain + agentic loop
+│   ├── index.js                   ← Gemini agent brain + agentic loop
 │   ├── servicenow.js              ← ServiceNow REST API client
 │   └── package.json               ← Node.js dependencies
 ├── .gitignore
@@ -83,7 +83,7 @@ servicenow-agent/
 
 **`servicenow-agent.yml`** — the trigger. Defines when and how the workflow runs. Uses `workflow_dispatch` so you manually trigger it with a text input. Passes your secrets securely as environment variables.
 
-**`agent/index.js`** — the brain. Sends your command to Claude, runs the agentic loop (Claude → tool call → ServiceNow result → Claude summarizes), and prints the final result.
+**`agent/index.js`** — the brain. Sends your command to Gemini, runs the agentic loop (Gemini → tool call → ServiceNow result → Gemini summarizes), and prints the final result.
 
 **`agent/servicenow.js`** — the hands. Makes authenticated HTTP calls to the ServiceNow REST API to create, update, close, or fetch tasks.
 
@@ -92,7 +92,7 @@ servicenow-agent/
 ## 🔑 Key concepts
 
 ### Agentic loop
-The core of the POC. Instead of a simple one-shot API call, Claude runs in a loop:
+The core of the POC. Instead of a simple one-shot API call, Gemini runs in a loop:
 1. Read your command
 2. Decide which tool to call (`create_task`, `update_task` etc.)
 3. Call ServiceNow API
@@ -103,7 +103,7 @@ The core of the POC. Instead of a simple one-shot API call, Claude runs in a loo
 This is what makes it an **agent** — not just a script.
 
 ### Tool use (function calling)
-Claude doesn't directly call APIs. Instead we define **tools** (like a menu of actions) and Claude decides which one to use based on your natural language input. Claude fills in all the required fields intelligently — priority, description, state — from context.
+Gemini doesn't directly call APIs. Instead we define **tools** (like a menu of actions) and Gemini decides which one to use based on your natural language input. Gemini fills in all the required fields intelligently — priority, description, state — from context.
 
 ### Secrets management
 API keys and passwords are stored as **GitHub Secrets** — never in code. The workflow injects them as environment variables at runtime. Even repo admins can't read them after saving.
@@ -115,7 +115,7 @@ API keys and passwords are stored as **GitHub Secrets** — never in code. The w
 ### Prerequisites
 - GitHub account with a repo
 - ServiceNow developer instance (free at developer.servicenow.com)
-- Anthropic API key (from console.anthropic.com — $5 free credits on signup)
+- Google Gemini API key (from aistudio.google.com — free tier available)
 - Node.js 20+
 
 ### Step 1 — Clone the repo
@@ -129,7 +129,7 @@ Go to **Settings → Secrets and variables → Actions → New repository secret
 
 | Secret | Value |
 |---|---|
-| `ANTHROPIC_API_KEY` | Your key from console.anthropic.com |
+| `GEMINI_API_KEY` | Your key from aistudio.google.com |
 | `SNOW_INSTANCE` | e.g. `dev12345.service-now.com` |
 | `SNOW_USERNAME` | `admin` |
 | `SNOW_PASSWORD` | Your ServiceNow admin password |
@@ -150,7 +150,7 @@ npm install
 SNOW_INSTANCE=dev12345.service-now.com \
 SNOW_USERNAME=admin \
 SNOW_PASSWORD=yourpassword \
-ANTHROPIC_API_KEY=sk-ant-xxx \
+GEMINI_API_KEY=your-gemini-key \
 USER_COMMAND="create a task for deployment review" \
 node index.js
 ```
@@ -166,7 +166,7 @@ node index.js
 | 3 | Moderate (default) |
 | 4 | Low |
 
-Claude infers priority automatically from context — "urgent", "prod down", "critical" → High/Critical. Regular tasks → Moderate.
+Gemini infers priority automatically from context — "urgent", "prod down", "critical" → High/Critical. Regular tasks → Moderate.
 
 ## 📊 State mapping
 
@@ -193,11 +193,11 @@ Claude infers priority automatically from context — "urgent", "prod down", "cr
 
 | Technology | Purpose |
 |---|---|
-| Claude claude-sonnet-4-5 | AI brain — natural language understanding + tool use |
+| Google Gemini 2.5 Flash | AI brain — natural language understanding + tool use |
 | GitHub Actions | CI/CD pipeline + manual workflow trigger |
 | Node.js 20 | Runtime for the agent |
 | ServiceNow REST API | Ticket management (sc_task table) |
-| @anthropic-ai/sdk | Claude API client |
+| @google/genai | Gemini API client |
 
 ---
 
